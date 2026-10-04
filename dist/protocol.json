@@ -1,0 +1,31 @@
+{
+  "version": "2.0",
+  "scoreFormula": "100 × C / (C + 2 × E + O)",
+  "errorWeight": 2,
+  "omissionWeight": 1,
+  "fieldWeights": "All 12 requested fields equally weighted; correct empty cells excluded.",
+  "correct": "Nonempty reference value reproduced correctly after documented normalization.",
+  "wrong": "Nonempty incorrect value, including invented content on a blank cell or extra row.",
+  "omitted": "Nonempty reference value missing, including every required field of an omitted flight.",
+  "rowAlignment": "Assistant-reviewed correspondence to source rows, pinned to input and reference hashes. Not inferred only from matching dates. Complete empty/cancellation-only placeholders ignored; partial/invented content penalized.",
+  "normalization": [
+    "Whitespace and case",
+    "Exact aliases: date -> flight_date; departure_location -> departure_place; arrival_location -> arrival_place; total_time -> total_minutes",
+    "Duration H:MM -> minutes, without recalculating from departure/arrival",
+    "Explicit null is never replaced by a different field",
+    "Time formatting HH:MM:00 equivalent to HH:MM"
+  ],
+  "reference": "Gemini Pro draft, corrected and confirmed by the logbook owner against original photos and digital CSV. Written local times retained; arithmetic mistakes in paper do not count against faithful OCR. Owner-confirmed corrections retained.",
+  "limitations": [
+    "3 photos, 37 flights, one run per model; no confidence intervals or repetition estimate",
+    "Same core prompt and original images, but provider, schema enforcement and reasoning settings differ; see details.json",
+    "Quality-price means score per observed dollar, not equal reliability",
+    "Costs and tokens cover final selected responses, not discarded diagnostics or earlier failed trials",
+    "Re-evaluation fixes content discarded by the original strict importer; supersedes v1 scores",
+    "Public export contains aggregates only; no original photos, flights, names, registrations or free-text remarks"
+  ],
+  "prompts": {
+    "SYSTEM_PROMPT": "You are an OCR and structured data extraction engine for handwritten or semi-handwritten aviation logbook tables.\n\nReturn only valid JSON matching the requested schema.\nDo not include markdown.\nDo not include explanations.\nDo not include comments.\nDo not invent missing data.\n\nEach detected table row corresponds to one flight.\nExtract only rows that are visible in the image.\nIf a field is unclear, unreadable, cut off, ambiguous, or inferred with low confidence, return null for that field.\nIf a cell contains ditto marks, quotation marks, repeated quote marks, or a clear \"same as above\" shorthand, copy the value from the nearest preceding visible row in the same column.\nOnly apply ditto/same-as-above inference when the referenced value is visible in the image and unambiguous.\nIf the row above is cropped, hidden, blank, ambiguous, or not visible in the image, return null instead of guessing.\nPreserve short aviation codes exactly when confident.\nNormalize dates to YYYY-MM-DD.\nNormalize times to HH:MM in 24-hour format.\nNormalize aircraft registrations to uppercase.\nfunction must be one of: pic, dual, instructor, null.\nday_landings must come from the landings column, not departures, takeoffs, or operations.\ntotal_minutes must come from the total time column if visible; otherwise calculate it only if departure_time and arrival_time are both clear and unambiguous.\nAvoid duplicate flights if the same row appears twice due to overlapping photos.",
+    "USER_PROMPT_TEMPLATE": "Extract flights from the attached aviation logbook image.\n\nImportant extraction rules:\n- One table row = one flight.\n- Do not invent rows.\n- Do not complete doubtful fields.\n- Use null for uncertain fields.\n- Treat ditto marks or quote marks such as \"\", '', \" \", or repeated quote-like marks in a cell as \"same as above\" for that column when the previous visible value is clear.\n- For ditto/same-as-above cells, copy the nearest preceding visible value in the same column; if that value is not visible or is ambiguous, use null.\n- Return only JSON.\n- Spanish handwritten text may appear.\n- Pay special attention to:\n  - dates;\n  - ICAO/location codes;\n  - aircraft registration;\n  - aircraft model;\n  - departure and arrival times;\n  - total flight time;\n  - PIC name;\n  - day landings;\n  - remarks.\n\nImage id: {source_image_id}"
+  }
+}

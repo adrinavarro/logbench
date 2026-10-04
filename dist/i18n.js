@@ -1,0 +1,72 @@
+'use strict';
+let language='en';
+try{if(localStorage.getItem('logbench-language')==='es')language='es';}catch{}
+const translations={
+'Ir al ranking':'Skip to ranking','Principal':'Main navigation','Cómo puntuamos':'Scoring','Explorar errores':'Explore errors','Qué IA lee mejor':'Which AI reads','un logbook de vuelo.':'a flight logbook best?',
+'Leer un logbook escrito a mano no siempre es fácil: hay tachones, comentarios en pequeño, abreviaturas y letra que cuesta descifrar. Comparamos cómo interpretan los modelos estas anotaciones y cuántos datos consiguen recuperar correctamente.':'Reading a handwritten logbook isn’t always easy: entries are crossed out, comments are squeezed into small spaces, and abbreviations and handwriting can be hard to decipher. We compare how models interpret these notes and how much of the data they get right.',
+'modelos':'models','fotos':'photos','entradas de logbook':'logbook entries','Resultados destacados':'Highlights','Cargando resultados…':'Loading results…',
+'¹ Calidad-precio = nota / coste. Resultado de esta muestra, no un veredicto universal. Una ejecución por modelo y foto; misma imagen y prompt base, con configuraciones documentadas.':'¹ Value for money = score / cost. Results describe this sample, not a universal verdict. One run per model and photo; the same image and core prompt, with documented settings.',
+'01 / RESULTADOS':'01 / RESULTS','Ranking de modelos.':'Model ranking.','Pulsa un modelo para ver dónde falla ↓':'Select a model to explore its errors ↓','Ranking de los ocho modelos':'Ranking of the eight models','Modelo':'Model','Nota':'Score','Incorrectos':'Incorrect','Omitidos':'Omitted','/ foto':'/ photo',
+'Incorrectos y omitidos: suma de las tres fotos. Coste de las respuestas seleccionadas; pruebas descartadas excluidas.':'Incorrect and omitted values: totals across all three photos. Costs cover the selected responses, excluding discarded trials.',
+'Comparación de costes':'Cost comparison','02 / LOS ERRORES':'02 / THE ERRORS','Qué errores comete cada modelo.':'Where each model goes wrong.','03 / EL CRITERIO':'03 / SCORING','Equivocarse cuesta el doble que omitir.':'A wrong value costs twice as much as a missing one.',
+'Una referencia corregida':'A corrected reference','El autor valida los 37 vuelos sobre las fotos y contrasta su logbook digital. Gemini Pro aporta el borrador; también se evalúa contra las correcciones.':'The owner validates all 37 flights against the photos and cross-checks the digital logbook. Gemini Pro supplies the draft and is also evaluated against the corrections.',
+'Los mismos datos para todos':'The same data for every model','Doce campos por vuelo: fechas, lugares, horas, aeronave, matrícula, duración, piloto, aterrizajes, función y observaciones. Se revisa la correspondencia entre filas.':'Twelve fields per flight: date, locations, times, aircraft type, registration, duration, pilot, landings, role and remarks. Row alignment is reviewed.',
+'Sin puntos por dejarlo todo vacío':'No credit for leaving everything blank','Los datos correctos suman. Un valor incorrecto pesa ×2 y uno omitido ×1. Los huecos que ya estaban vacíos no inflan la nota.':'Correct values earn credit. An incorrect value carries a weight of ×2; an omission, ×1. Correctly empty fields do not inflate the score.',
+'NOTA GLOBAL':'OVERALL SCORE','Reglas y límites':'Rules and limitations','Qué cuenta como error':'What counts as an error',
+'También cuentan los datos inventados en una celda vacía o una fila extra. Omitir un vuelo cuenta como omitir todos sus datos. Una fila tachada omitida o vacía no penaliza.':'Invented values in an empty cell or an extra row count as errors too. A missing flight counts as omitting all its required values. A crossed-out row may be omitted or returned empty without penalty.',
+'Se compara lo escrito: una duración mal calculada en el papel no penaliza al OCR que la transcribe fielmente. Se conservan las horas locales de la foto.':'We evaluate what is written: faithfully transcribing a duration miscalculated on paper is not an OCR error. Local times in the photo are preserved.',
+'Cómo hacemos comparable la salida':'How outputs are made comparable','Se unifican espacios, mayúsculas, nombres de campo equivalentes y duraciones en horas o minutos. No se corrigen lecturas incorrectas ni se completan huecos con la referencia.':'Whitespace, case, equivalent field names and durations in hours or minutes are normalized. Incorrect readings are not corrected, and the reference is never used to fill gaps.',
+'La versión 2 recupera valores que el importador anterior descartaba, como':'Version 2 recovers values discarded by the previous importer, such as','. Sustituye las puntuaciones previas.':'. It supersedes previous scores.',
+'Qué significa calidad-precio':'What value for money means','Nota global dividida por el coste total de las mismas tres fotos. Favorece la eficiencia económica; no garantiza la misma fiabilidad que el ganador en calidad.':'Overall score divided by the total cost of the same three photos. This rewards cost efficiency; it does not imply the same reliability as the quality winner.',
+'El coste es el importe registrado de las respuestas evaluadas, dividido entre las tres fotos. No incluye pruebas descartadas.':'Cost is the recorded charge for the evaluated responses, divided by three photos. Discarded trials are excluded.',
+'Lo que esta prueba no demuestra':'What this test cannot establish','La muestra es pequeña y no mide variación entre repeticiones. Hay diferencias de proveedor, presupuesto de razonamiento y formato estructurado; puedes consultarlas al explorar cada foto.':'The sample is small and does not measure variation across repeated runs. Provider, reasoning budget and structured-output settings differ; these are available for each photo.',
+'Se publican métricas agregadas, sin fotos ni datos identificativos.':'Published results contain no photos or identifying values.','Activa JavaScript para explorar los resultados.':'Enable JavaScript to explore the results.',
+'MEJOR CALIDAD':'BEST QUALITY','MEJOR CALIDAD-PRECIO¹':'BEST VALUE¹','Cargando detalle…':'Loading details…','Las tres fotos':'All three photos','Todos los campos':'All fields','Tipo de fallo':'Error type','Errores y omisiones':'Errors and omissions','Solo incorrectos':'Incorrect only','Solo omitidos':'Omitted only','Campo':'Field','Correctos':'Correct',
+'Pulsa un campo para aislar sus fallos. Los vacíos correctos no suman puntos.':'Select a field to isolate its errors. Correctly empty fields earn no credit.','Filas de la referencia validada':'Rows in the validated reference','Condiciones de estas ejecuciones':'Run settings','No hay discrepancias con estos filtros.':'No discrepancies match these filters.',
+'Fecha':'Date','Origen':'Departure location','Hora de salida':'Departure time','Destino':'Arrival location','Hora de llegada':'Arrival time','Aeronave':'Aircraft type','Matrícula':'Registration','Duración':'Duration','Piloto':'Pilot','Aterrizajes':'Landings','Función':'Role','Observaciones':'Remarks',
+'Lectura distinta':'Different reading','Dato omitido':'Missing value','Fila adicional':'Extra row','Contenido añadido':'Added content','Fecha incorrecta':'Incorrect date','Comentario en otra fila':'Remark on another row','Transcripción distinta':'Different transcription',
+'El valor no coincide con la referencia validada.':'The value does not match the validated reference.','La referencia contiene un dato y el modelo deja el campo vacío.':'The reference contains a value, but the model leaves this field blank.','El modelo añade contenido en una fila sin vuelo válido en la referencia.':'The model adds content on a row with no valid flight in the reference.','El modelo rellena una celda que está vacía en la referencia.':'The model fills a cell that is empty in the reference.','El texto coincide con la observación de otro vuelo de la referencia.':'The text matches the remark for another flight in the reference.','El texto difiere de la referencia, incluso tras unificar espacios y mayúsculas.':'The text differs from the reference even after normalizing whitespace and case.',
+'No se pudo cargar el detalle. Selecciona el modelo de nuevo para reintentar.':'Could not load details. Select the model again to retry.','No se pudieron cargar los resultados. Recarga la página para reintentar.':'Could not load results. Reload the page to retry.',
+'COSTE POR FOTO':'COST PER PHOTO','Pagar más no asegura leer mejor.':'Paying more does not guarantee better results.','Centavos de USD / foto · coste observado':'US cents / photo · observed cost',
+'La mejor nota de la muestra. Recupera casi todos los datos, pero todavía cambia algunas fechas y horas y desplaza observaciones entre vuelos.':'The highest score in this sample. Recovers almost all values, but still changes some dates and times and assigns remarks to the wrong flights.',
+'Transcribe bien matrículas y pilotos. Su principal debilidad son las fechas: confunde días, meses y años. También desplaza comentarios entre filas.':'Transcribes registrations and pilot names well. Dates are its main weakness: it confuses days, months and years. It also assigns remarks to the wrong rows.',
+'Comete menos errores que Pro entre los valores que sí devuelve, pero deja más datos sin recuperar. Destacan las matrículas ausentes y las observaciones incorrectas.':'Makes fewer mistakes than Pro among the values it returns, but misses more data. Missing registrations and incorrect remarks stand out.',
+'Los fallos se concentran en matrículas y fechas. También confunde la aeronave en varias filas y algunos nombres de lugares.':'Errors are concentrated in registrations and dates. It also misreads aircraft types on several rows and some location names.',
+'Mejora a Opus en esta muestra. Repite una matrícula mal leída en toda una página y deja matrículas y pilotos vacíos en otra. También omite observaciones.':'Outperforms Opus in this sample. Repeats a misread registration across an entire page and leaves registrations and pilots blank on another. It also omits remarks.',
+'El mayor rendimiento por dólar, con un coste muy bajo. El compromiso es la fiabilidad: confunde fechas, aeronaves, matrículas y lugares, aunque deja pocos campos vacíos.':'The highest score per dollar, at a very low cost. Reliability is the trade-off: it misreads dates, aircraft types, registrations and locations, while leaving few fields blank.',
+'Alterna errores y omisiones. Se repiten fallos en matrículas y lugares; en una página faltan los nombres de piloto. No siempre resuelve bien las repeticiones.':'Combines errors and omissions. Registrations and locations are recurring problems; pilot names are missing on one page. Repeated entries are not always resolved correctly.',
+'Los errores más frecuentes están en fechas y lugares. Además, atribuye datos a una línea tachada y deja sin recuperar varias funciones y observaciones.':'Dates and locations are the most frequent errors. It also assigns data to a crossed-out row and fails to recover several roles and remarks.'
+};
+// Full sentences are translated exactly; these patterns cover numeric UI templates.
+function english(text){
+ const trim=text.trim();if(Object.hasOwn(translations,trim))return text.replace(trim,translations[trim]);
+ for(const [source,target] of Object.entries(translations)){if(source.length>40&&text.startsWith(source))return target+english(text.slice(source.length));}
+ const parts={
+ 'datos correctos':'correct values','datos incorrectos en la muestra':'incorrect values in the sample','por foto':'per photo','incorrectos':'incorrect','omitidos':'omitted','omitido':'omitted','correctos':'correct','Foto':'Photo','vuelos':'flights','USD / foto':'USD / photo',' · media':' · average','discrepancias':'discrepancies',' en ':' in ','fila extra':'extra row','vuelo ':'flight ','Fila ':'Row ',' de la salida del modelo.':' of the model output.','razonamiento:':'reasoning:','por defecto':'default','medio':'medium','bajo':'low','alto':'high','límite de salida:':'output limit:','formato estructurado':'structured output','formato solicitado en el prompt':'format requested in the prompt','Astra cuesta':'Astra costs','veces más':'times as much',' que Gemini Pro en estas ejecuciones, con una nota de ':' as Gemini Pro in these runs, scoring ',' frente a ':' versus ','Difiere ':'Different ','año':'year','mes':'month','día':'day'
+ };
+ const escapeRegex=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const pattern=new RegExp(Object.keys(parts).sort((a,b)=>b.length-a.length).map(key=>(/^\p{L}/u.test(key)?'(?<![\\p{L}])':'')+escapeRegex(key)+(/\p{L}$/u.test(key)?'(?![\\p{L}])':'')).join('|'),'gu');
+ let out=text.replace(pattern,match=>parts[match]);
+ for(const label of ['Fecha','Origen','Hora de salida','Destino','Hora de llegada','Aeronave','Matrícula','Duración','Piloto','Aterrizajes','Función','Observaciones'])out=out.replace(new RegExp('(?<![\\p{L}])'+label.toLowerCase()+'(?![\\p{L}])','gu'),translations[label].toLowerCase());
+ return out;
+}
+const originalText=new WeakMap(),originalAttrs=new WeakMap();
+function translateUI(){
+ document.documentElement.lang=language;
+ document.title=language==='en'?'Logbench — Which AI reads a flight logbook best?':'Logbench — Qué IA lee mejor un logbook de vuelo';
+ document.querySelector('meta[name="description"]').content=language==='en'?'Eight models, the same photos and a validated reference: accuracy, errors, omissions and cost per photo.':'Ocho modelos, las mismas fotos y una referencia validada: calidad de lectura, errores, omisiones y coste por foto.';
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;
+ while(node=walker.nextNode()){
+  if(node.parentElement.closest('script,style,[data-no-translate]'))continue;
+  const previous=originalText.get(node);
+  if(!previous||node.textContent!==previous.rendered)originalText.set(node,{source:node.textContent});
+  const entry=originalText.get(node);entry.rendered=language==='en'?english(entry.source):entry.source;
+  if(node.textContent!==entry.rendered)node.textContent=entry.rendered;
+ }
+ document.querySelectorAll('[aria-label]').forEach(el=>{
+  if(el.closest('[data-no-translate]'))return;
+  if(!originalAttrs.has(el))originalAttrs.set(el,el.getAttribute('aria-label'));
+  const source=originalAttrs.get(el);el.setAttribute('aria-label',language==='en'?english(source):source);
+ });
+}
+translateUI();
